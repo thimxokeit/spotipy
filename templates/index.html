@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+            crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+
+    <script src="https://kit.fontawesome.com/b1c5ccd7ac.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            font-family: 'Pretendard';
+        }
+
+        .cover {
+            color: goldenrod;
+            width: 100%;
+            max-height: 250px;
+
+            background-color: #fcc221;
+            background-size: cover;
+            background-position: center;
+
+            color: black;
+
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .cover_bibimbap {
+            margin: 10px;
+            text-align: left;
+
+        }
+
+        .cover_title {
+            margin-top: 25px;
+            text-align: center;
+            align-self: center;
+
+        }
+
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table_container').hide();
+            /*$('#submit').click(function () {
+                if (!$('#track').val()) {
+                    alert('노래를 담아주세요!');
+                }
+            })*/
+        });
+
+
+        function show_results() {
+            $('#description').hide();
+            $('#table_container').show();
+            spotify_search();
+        }
+    </script>
+
+    <script>
+        var audio = document.getElementById("play");
+        var playing = false;
+
+        function preview_play(audio) {
+            if (playing) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            playing = !playing;
+        }
+
+    </script>
+    <script>
+        function spotify_search() {
+            let track = $('#track').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/search_results",
+                data: {'track_input': track},
+                success: function (response) {
+                }
+            });
+
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            getTracks();
+        });
+
+        function getTracks() {
+            $.ajax({
+                type: "GET",
+                url: "/search_results",
+                data: {},
+                success: function (response) {
+                    let tracks = response.track;
+                    let tracksList = $("#tracks-list");
+                    tracksList.empty();
+                    /*let currentTime = Math.floor(Date.now() / 1000);*/
+                    let currentHour = new Date().getHours();
+
+                    tracks.forEach(function (track) {
+                        /*if (Math.abs(track.timestamp - currentTime) < 5)*/
+                        if (track.hour === currentHour) {
+                            tracksList.append(`
+                                <tr>
+                                    <td>${track.track}</td>
+                                    <td>${track.artists}</td>
+                                    <td><a href="${track.image}" target="_blank"><img src="${track.image}" alt="Track Image" style="height:200px;"></a></td>
+                                    <td><button onclick="preview_play(this.nextElementSibling)" style="border:0; outline:0; background-color:transparent;">
+                                        <i class="fa-brands fa-spotify" ></i>
+                                        </button>
+                                        <audio id="play">
+                                            <source src=${track.url} type="audio/mpeg">
+                                        </audio>
+                             </tr>
+                    `);
+                        }
+                    })
+                },
+            });
+        }
+    </script>
+
+    <title>TEST</title>
+</head>
+<body>
+
+
+<div class="cover">
+
+    <div class="cover_bibimbap">
+        <b>Playlist Bibimbap</b>
+    </div>
+    <div class="cover_title">
+        <h1><b>지금 듣고 있는 노래<br>모아모아 함께 들어요!</b></h1>
+
+    </div>
+    <div class="input-group mb-3" style="width: 60%; align-self: center; margin-top: 20px;">
+        <input id="track" type="text" class="form-control" placeholder="지금 듣고 있는 노래를 검색해 노래를 모아보세요!"
+               aria-label="지금 듣고 있는 노래를 검색해 노래를 모아보세요!"
+               aria-describedby="노래 제목을 검색한 뒤 검색 버튼을 눌러주세요">
+
+        <button class="btn btn-dark" onclick="javscript: show_results(); spotify_search();" type="submit"
+                id="search_button">
+            <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
+        </button>
+
+    </div>
+
+    <div class="box clearfix">
+
+        <div id="landingContainer" class="landing">
+            <img id="description"
+                 src="/Desktop/Users/thimxokeit/Documents/sparta/projects/Bibimbap+Playlist/description.png"
+                 alt="검색 창에 노래를 검색 해 노래를 담아주세요!"
+                 style="display: block; margin:0 0 10px 0; height: auto; overflow: hidden; max-width: 100%; ">
+        </div>
+
+
+        <div id="table_container" class="container" style=" justify-content: center; display: none;">
+            <div id="tracks-table">
+                <table class="table table-striped" style="height: 100px;">
+                    <thead>
+                    <tr>
+                        <th>Track Name</th>
+                        <th>Artist Name</th>
+                        <th>Image URL</th>
+                        <th>Track URL</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tracks-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>
