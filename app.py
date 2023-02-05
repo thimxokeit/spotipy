@@ -65,7 +65,7 @@ def search_reults():
 
 @app.route("/search_results", methods=["GET"])
 def playlist_get():
-    playlist = list(db.search_results.find({}, {'_id': False}))
+    playlist = list(db.search_results.find({}, {'_id': False}).sort([('timestamp', -1)]))
     return jsonify({'track': playlist})
 
 
