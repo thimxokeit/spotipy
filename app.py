@@ -60,7 +60,7 @@ def search_reults():
         tracks.append(track_result)
         db.search_results.insert_one(track_result)
 
-    return jsonify({'track': tracks})
+    return 'OK'
 
 
 @app.route("/search_results", methods=["GET"])

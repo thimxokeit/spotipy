@@ -53,41 +53,37 @@
 
         }
 
+        .landing {
+            align-content: center;
+            align-items: center;
+        }
 
     </style>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#table_container').hide();
-            /*$('#submit').click(function () {
-                if (!$('#track').val()) {
-                    alert('노래를 담아주세요!');
+            $('#search_button').click(function (event) {
+
+                event.preventDefault();
+                var input = $('#track').val();
+                if (input.length === 0) {
+                    alert("모아 들을 노래를 검색해주세요!");
+                } else {
+                    show_results();
+                    spotify_search();
                 }
-            })*/
-        });
+            });
+        })
 
-
+    </script>
+    <script>
         function show_results() {
             $('#description').hide();
             $('#table_container').show();
-            spotify_search();
         }
     </script>
 
-    <script>
-        var audio = document.getElementById("play");
-        var playing = false;
-
-        function preview_play(audio) {
-            if (playing) {
-                audio.pause();
-            } else {
-                audio.play();
-            }
-            playing = !playing;
-        }
-
-    </script>
     <script>
         function spotify_search() {
             let track = $('#track').val()
@@ -140,7 +136,41 @@
                     })
                 },
             });
+
+            setTimeout(getTracks(),3000);
+
+
         }
+    </script>
+
+    <script>
+        var audio = document.getElementById("play");
+        var playing = false;
+
+        function preview_play(audio) {
+            if (playing) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            playing = !playing;
+        }
+
+    </script>
+
+    <script>
+        const button = document.querySelector("#search_button");
+        const modal = document.querySelector("#modal");
+
+        button.addEventListener("click", function () {
+            modal.style.display = "block";
+        });
+
+        const closeButton = modal.querySelector(".btn-close");
+        closeButton.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
     </script>
 
     <title>TEST</title>
@@ -158,24 +188,40 @@
 
     </div>
     <div class="input-group mb-3" style="width: 60%; align-self: center; margin-top: 20px;">
-        <input id="track" type="text" class="form-control" placeholder="지금 듣고 있는 노래를 검색해 노래를 모아보세요!"
-               aria-label="지금 듣고 있는 노래를 검색해 노래를 모아보세요!"
-               aria-describedby="노래 제목을 검색한 뒤 검색 버튼을 눌러주세요">
+        <input id="track" type="text" class="form-control" placeholder="지금 듣고 있는 노래를 검색해 노래를 모아보세요!">
 
-        <button class="btn btn-dark" onclick="javscript: show_results(); spotify_search();" type="submit"
-                id="search_button">
+        <button class="btn btn-dark" type="submit" id="search_button">
             <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
         </button>
 
     </div>
 
+
     <div class="box clearfix">
+
+        <div class="modal" tabindex="-1" id="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>모을 노래를 찾고 있어요!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="getTracks()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="landingContainer" class="landing">
             <img id="description"
-                 src="/Desktop/Users/thimxokeit/Documents/sparta/projects/Bibimbap+Playlist/description.png"
-                 alt="검색 창에 노래를 검색 해 노래를 담아주세요!"
-                 style="display: block; margin:0 0 10px 0; height: auto; overflow: hidden; max-width: 100%; ">
+                 src="/static/description.png"
+                 style="display: block; margin:0 0 10px 0; height: auto; max-width: 90%; ">
         </div>
 
 
@@ -198,6 +244,8 @@
 
 
     </div>
+
+
 </div>
 </body>
 </html>
