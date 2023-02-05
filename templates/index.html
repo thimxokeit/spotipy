@@ -70,18 +70,14 @@
                 if (input.length === 0) {
                     alert("모아 들을 노래를 검색해주세요!");
                 } else {
-                    show_results();
                     spotify_search();
+                    showModalAndHide();
+                    getTracks();
+
                 }
             });
         })
 
-    </script>
-    <script>
-        function show_results() {
-            $('#description').hide();
-            $('#table_container').show();
-        }
     </script>
 
     <script>
@@ -93,16 +89,43 @@
                 url: "/search_results",
                 data: {'track_input': track},
                 success: function (response) {
-                }
-            });
+                },
 
+            });
         }
     </script>
 
     <script>
-        $(document).ready(function () {
-            getTracks();
+        function showModalAndHide() {
+            document.querySelector(".modal").style.display = "block";
+            setTimeout(function () {
+                document.querySelector(".modal").style.display = "none";
+                $('#description').hide();
+                $('#table_container').show();
+            }, 5000);
+        }
+    </script>
+
+    <script>
+        const button = document.querySelector("#search_button");
+        const modal = document.querySelector("#modal");
+
+        button.addEventListener("click", function () {
+            modal.style.display = "block";
         });
+
+        const closeButton = modal.querySelector(".btn-close");
+        closeButton.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            getTracks()
+        })
 
         function getTracks() {
             $.ajax({
@@ -134,14 +157,15 @@
                     `);
                         }
                     })
-                },
-            });
 
-            setTimeout(getTracks(),3000);
+                }
+            });
 
 
         }
+
     </script>
+
 
     <script>
         var audio = document.getElementById("play");
@@ -156,22 +180,9 @@
             playing = !playing;
         }
 
-    </script>
-
-    <script>
-        const button = document.querySelector("#search_button");
-        const modal = document.querySelector("#modal");
-
-        button.addEventListener("click", function () {
-            modal.style.display = "block";
-        });
-
-        const closeButton = modal.querySelector(".btn-close");
-        closeButton.addEventListener("click", function () {
-            modal.style.display = "none";
-        });
 
     </script>
+
 
     <title>TEST</title>
 </head>
@@ -181,7 +192,8 @@
 <div class="cover">
 
     <div class="cover_bibimbap">
-        <b>Playlist Bibimbap</b>
+        <button onclick="window.reload()" style="background-color: transparent; border: 0;outline:0;"><b>Playlist Bibimbap</b>
+        </button>
     </div>
     <div class="cover_title">
         <h1><b>지금 듣고 있는 노래<br>모아모아 함께 들어요!</b></h1>
@@ -190,7 +202,7 @@
     <div class="input-group mb-3" style="width: 60%; align-self: center; margin-top: 20px;">
         <input id="track" type="text" class="form-control" placeholder="지금 듣고 있는 노래를 검색해 노래를 모아보세요!">
 
-        <button class="btn btn-dark" type="submit" id="search_button">
+        <button class="btn btn-dark" type="submit" id="search_button" onclick="showModalAndHide()">
             <i class="fa-solid fa-magnifying-glass" style="color:white;"></i>
         </button>
 
@@ -199,24 +211,6 @@
 
     <div class="box clearfix">
 
-        <div class="modal" tabindex="-1" id="modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>모을 노래를 찾고 있어요!</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="getTracks()">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div id="landingContainer" class="landing">
             <img id="description"
@@ -224,8 +218,35 @@
                  style="display: block; margin:0 0 10px 0; height: auto; max-width: 90%; ">
         </div>
 
+        <div class="modal" tabindex="-1" id="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">모을 노래를 찾고 있어요!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-grow text-warning m-5" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-warning m-5" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="spinner-grow text-warning m-5" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
 
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="table_container" class="container" style=" justify-content: center; display: none;">
+
             <div id="tracks-table">
                 <table class="table table-striped" style="height: 100px;">
                     <thead>
