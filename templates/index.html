@@ -61,8 +61,16 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
+        function description_show() {
+            document.getElementById('description').style.display = 'block';
+        }
+
+    </script>
+
+    <script>
         $(document).ready(function () {
-            $('#table_container').hide();
+
+            $('#discription').hide();
             $('#search_button').click(function (event) {
 
                 event.preventDefault();
@@ -71,9 +79,6 @@
                     alert("모아 들을 노래를 검색해주세요!");
                 } else {
                     spotify_search();
-                    showModalAndHide();
-                    getTracks();
-
                 }
             });
         })
@@ -81,6 +86,7 @@
     </script>
 
     <script>
+
         function spotify_search() {
             let track = $('#track').val()
 
@@ -89,6 +95,9 @@
                 url: "/search_results",
                 data: {'track_input': track},
                 success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+
                 },
 
             });
@@ -100,8 +109,6 @@
             document.querySelector(".modal").style.display = "block";
             setTimeout(function () {
                 document.querySelector(".modal").style.display = "none";
-                $('#description').hide();
-                $('#table_container').show();
             }, 5000);
         }
     </script>
@@ -134,14 +141,11 @@
                 data: {},
                 success: function (response) {
                     let tracks = response.track;
+                    tracks.sort((a, b) => b.timestamp - a.timestamp);
                     let tracksList = $("#tracks-list");
                     tracksList.empty();
-                    /*let currentTime = Math.floor(Date.now() / 1000);*/
-                    let currentHour = new Date().getHours();
-
-                    tracks.forEach(function (track) {
-                        /*if (Math.abs(track.timestamp - currentTime) < 5)*/
-                        if (track.hour === currentHour) {
+                    let top10Tracks = tracks.slice(0, 10);
+                    top10Tracks.forEach(function (track) {
                             tracksList.append(`
                                 <tr>
                                     <td>${track.track}</td>
@@ -155,7 +159,7 @@
                                         </audio>
                              </tr>
                     `);
-                        }
+
                     })
 
                 }
@@ -192,7 +196,8 @@
 <div class="cover">
 
     <div class="cover_bibimbap">
-        <button onclick="window.reload()" style="background-color: transparent; border: 0;outline:0;"><b>Playlist Bibimbap</b>
+        <button onclick="window.reload()" style="background-color: transparent; border: 0;outline:0;"><b>Playlist
+            Bibimbap</b>
         </button>
     </div>
     <div class="cover_title">
@@ -213,9 +218,12 @@
 
 
         <div id="landingContainer" class="landing">
+            <button onclick="description_show()" style="border: 0; outline: 0; justify-self: center; ">Playlist Bibimbap이
+                무엇인가요?
+            </button>
             <img id="description"
                  src="/static/description.png"
-                 style="display: block; margin:0 0 10px 0; height: auto; max-width: 90%; ">
+                 style="display: none; margin:0 0 10px 0; height: auto; max-width: 90%; ">
         </div>
 
         <div class="modal" tabindex="-1" id="modal">
@@ -245,7 +253,7 @@
                 </div>
             </div>
         </div>
-        <div id="table_container" class="container" style=" justify-content: center; display: none;">
+        <div id="table_container" class="container" style=" justify-content: center; display: block;">
 
             <div id="tracks-table">
                 <table class="table table-striped" style="height: 100px;">
